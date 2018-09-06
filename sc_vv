@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#SBATCH --partition=s_standard
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=160000
+#SBATCH -o std.out
+
+./control

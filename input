@@ -1,0 +1,52 @@
+0.006      ! dt      : length of time step during propagation (in fs)
+0.024      ! dt_adia : length of time step during calc. for elec. wf (in fs)
+0.01       ! dt_vib  : length of time step during calc. for nuclear wf (in fs)
+___________________________________________________________________________________________________
+Potential & Grid properties
+
+   1.5     ! rc   : screening parameter: electron-(moving)-nucleus (in A)
+   1.5     ! rf   : screening parameter: electron-(fixed)-nuclei   (in A)
+   1.5     ! re   : screening parameter: electron-electron         (in A)
+  -5.0     ! rl   : Position of left nucleus  (in A)
+   5.0     ! rr   : Position of right nucleus (in A)
+   1.0     ! z1   : charge of left nucleus   (in a.u.)
+   1.0     ! z2   : charge of right nucleus  (in a.u.)
+   1.0     ! z3   : charge of center nucleus (in a.u.)
+  -4.0     ! R0   : R-grid start (in A)
+   4.0     ! Rend : R-grid end   (in A)
+ -60.0     ! x0   : x-grid start (in A)
+  60.0     ! xend : x-grid end   (in A)
+   0.0     ! E0   : Energy-grid start (in eV, used for ionic wf with pert. theory)
+  10.0     ! Eend : Energy-grid end (in eV)
+___________________________________________________________________________________________________
+Initial wave package
+
+ 1         ! init_state : initial state (1 = groundstate)
+-2.5       ! R_init : center of initial wave package used for propagation (in A)
+ 7.14      ! beta_R : width of initial wave package (exp(-beta_R *(R-R_init)^2) ) (in A^-2)
+___________________________________________________________________________________________________
+Pump & Probe pulses: Properties
+
+1770.0     ! lambda_ir  : wavelength of IR  pulse (in nm)
+  39.5     ! lambda_xuv : wavelength of XUV pulse (in nm)
+   0.0     ! E0_ir      : field strength of IR  pulse (in a.u.)
+   0.01    ! E0_xuv     : field strength of XUV pulse (in a.u.)
+   7.0     ! fwhm_ir    : fwhm of IR  pulse (in fs)
+   0.07    ! fwhm_xuv   : fwhm of XUV pulse (in fs)
+  15.0     ! t0_ir      : center of IR pulse (in fs)
+  10.0     ! t0_xuv     : center of IR pulse (in fs)
+   0.5     ! cep        : Carrier-Envelope-Phase of XUV pulse (in units of PI)
+___________________________________________________________________________________________________
+Imaginary Time Propagation: Properties
+
+   2.5     ! Req       : center of initial wavefunction for nuclear imaginary time propagation
+   3.0     ! xeq1      : center of initial wavefunction for electronic imaginary time propagation
+   3.0     ! xeq2      : center of initial wavefunction for electronic imaginary time propagation
+   0.01    ! beta_elec : width of initial wavefunction for electronic ITP (exp(-beta...)) (in a.u.)
+   0.5     ! beta_nucl : width of initial wavefunction for nuclear ITP (exp(-beta...)) (in a.u.)
+   1.d-15  ! thresh    : threshold value for ITPs
+  +1       ! sym       : spatial symmetry of eigenstates (1 even, -1 uneven)
+___________________________________________________________________________________________________
+Option Table
+
+.false.    ! electronic wavefunction already exists in file & should be used
