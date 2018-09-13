@@ -31,6 +31,7 @@ Pump & Probe pulses: Properties
   39.5     ! lambda_xuv : wavelength of XUV pulse (in nm)
    0.0     ! E0_ir      : field strength of IR  pulse (in a.u.)
    0.01    ! E0_xuv     : field strength of XUV pulse (in a.u.)
+.true.     ! status of xuv pulse. false for off, true for on
    7.0     ! fwhm_ir    : fwhm of IR  pulse (in fs)
    0.07    ! fwhm_xuv   : fwhm of XUV pulse (in fs)
   15.0     ! t0_ir      : center of IR pulse (in fs)

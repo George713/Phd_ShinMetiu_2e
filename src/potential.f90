@@ -94,8 +94,6 @@ module MODpotential
             pot(i,j1,j2) = v12 + v13 + v23 + v1e1 + v2e1 + v3e1 + v1e2 + v2e2 + v3e2 + e1e2
 
         end do
-
-            pot1e(i,j2) = v12 + v13 + v23 + v1e1 + v2e1 + v3e1
         end do
 
         ionicpot(i) = v12 + v13 + v23

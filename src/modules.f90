@@ -5,7 +5,7 @@
 module data_grid
  integer, parameter::      Nt =  4167     ! number of time steps
  integer, parameter::      Nx =  1024     ! grid points for x1 & x2
- integer, parameter::      NR =   256     ! grid points for R
+ integer, parameter::      NR =    64     ! grid points for R
  integer, parameter::      NE =   500     ! grid points for energy
  integer, parameter:: Nstates =     4     ! number of electronic states
  integer, parameter:: Vstates =     2     ! number of vibrational states
@@ -63,7 +63,6 @@ module global_arrays
 use data_grid
  double precision:: PR(NR), Px(Nx)          ! nuclear & electronic momentum grid
  double precision:: pot(NR,Nx,Nx)           ! potential with electrons
- double precision:: pot1e(NR,Nx)           ! potential with electrons
  double precision:: ionicpot(NR)            ! potential without electrons
  double precision:: mu(NR,Nstates-1)        ! dipole moment
  complex*16      :: mu_ionic(NR,Nx)         ! ionic dipole moment (NR,Nx)
@@ -83,4 +82,5 @@ end module
 
 module options
  logical::  option_adiabatic    ! true: do imaginary time propagation, false: use existing data
+ logical::  xuv						! status of xuv pulse. false for off, true for on
 end module
