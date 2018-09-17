@@ -221,7 +221,7 @@ module MODsubroutines
       end do
       end do
 
-      norm = norm *dR *dpx**2
+      norm = norm *dpR *dpx**2
 
     return
   end subroutine integ_complex_p

@@ -20,7 +20,7 @@ subroutine prop3D
   integer*8 planF, planB
 
   double precision x1, x2, R, E_grid(2)
-  double precision norm_total, norm_in, norm1e, norm2e
+  double precision norm_total, norm_in, norm1e, norm2e, normP
   double precision time
   double precision A, E_tot               ! vector potential & total electric field (= IR + XUV)
   double precision A_ir, A_xuv            ! Electric fields of IR & XUV pulses
@@ -264,6 +264,7 @@ subroutine prop3D
 
   ! p_R & p_x expectation value
     call dfftw_execute_dft(planF, psi, psi)
+      call integ_complex_p(psi, normP)
       
     do J2 = 1, Nx
     do J1 = 1, Nx
@@ -273,8 +274,8 @@ subroutine prop3D
     end do
     end do
     end do
-    epR = epR *dpR /norm_in
-    epx  = epx  *dpx**2 /norm_in
+    epR = epR *dpR /normP
+    epx  = epx  *dpx**2 /normP
       
     call dfftw_execute_dft(planB, psi, psi)
     psi = psi / dble(NR * Nx**2)
