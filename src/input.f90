@@ -45,6 +45,7 @@ module MODinput
       read(1,*) lambda_xuv  ! wavelength of XUV pulse (in nm)
       read(1,*) E0_ir       ! field strength of IR pulse (in a.u.)
       read(1,*) E0_xuv      ! field strength of XUV pulse (in a.u.)
+      read(1,*) xuv         ! status of xuv pulse. false for off, true for on
       read(1,*) fwhm_ir     ! fwhm of IR pulse (in fs)
       read(1,*) fwhm_xuv    ! fwhm of XUV pulse (in fs)
       read(1,*) t0_ir       ! center of IR pulse (in fs)

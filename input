@@ -1,4 +1,4 @@
-0.006      ! dt      : length of time step during propagation (in fs)
+0.010      ! dt      : length of time step during propagation (in fs)
 0.024      ! dt_adia : length of time step during calc. for elec. wf (in fs)
 0.01       ! dt_vib  : length of time step during calc. for nuclear wf (in fs)
 ___________________________________________________________________________________________________
@@ -30,7 +30,8 @@ Pump & Probe pulses: Properties
 1770.0     ! lambda_ir  : wavelength of IR  pulse (in nm)
   39.5     ! lambda_xuv : wavelength of XUV pulse (in nm)
    0.0     ! E0_ir      : field strength of IR  pulse (in a.u.)
-   0.01    ! E0_xuv     : field strength of XUV pulse (in a.u.)
+   0.0     ! E0_xuv     : field strength of XUV pulse (in a.u.)
+.false.    ! status of xuv pulse. false for off, true for on
    7.0     ! fwhm_ir    : fwhm of IR  pulse (in fs)
    0.07    ! fwhm_xuv   : fwhm of XUV pulse (in fs)
   15.0     ! t0_ir      : center of IR pulse (in fs)
