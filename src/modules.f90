@@ -4,8 +4,8 @@
 
 module data_grid
  integer, parameter::      Nt =  2500     ! number of time steps
- integer, parameter::      Nx =  1024     ! grid points for x1 & x2
- integer, parameter::      NR =    64     ! grid points for R
+ integer, parameter::      Nx =   512     ! grid points for x1 & x2
+ integer, parameter::      NR =   128     ! grid points for R
  integer, parameter::      NE =   500     ! grid points for energy
  integer, parameter:: Nstates =     4     ! number of electronic states
  integer, parameter:: Vstates =     2     ! number of vibrational states
@@ -61,16 +61,22 @@ end module pot_param
 
 module global_arrays
 use data_grid
- double precision:: PR(NR), Px(Nx)          ! nuclear & electronic momentum grid
- double precision:: pot(NR,Nx,Nx)           ! potential with electrons
- double precision:: ionicpot(NR)            ! potential without electrons
- double precision:: mu(NR,Nstates-1)        ! dipole moment
- complex*16      :: mu_ionic(NR,Nx)         ! ionic dipole moment (NR,Nx)
- complex*16      :: mu_ionic_e(NR,NE)       ! ionic dipole moment (NR,NE)
- double precision:: adb(NR,Nstates)         ! electronic Eigenenergies (potential energy surface)
- double precision:: ewf(NR,Nx,Nx,Nstates)   ! electronic wave function
- double precision:: nwf(NR,Vstates)         ! nuclear wave function
- double precision:: cofR(NR), cofx(Nx)      ! nuclear & electronic cutoff-functions
+ double precision:: PR(NR), Px(Nx)           ! nuclear & electronic momentum grid
+ double precision:: pot(NR,Nx,Nx)            ! potential with electrons
+ double precision:: pot_x(NR,Nx,Nx)          ! potential with x-electron far away(ionized) at 80 A
+ double precision:: pot_y(NR,Nx,Nx)          ! potential with y-electron far away(ionized) at 80 A
+ double precision:: ionicpot(NR)             ! potential without electrons
+ double precision:: mu(NR,Nstates-1)         ! dipole moment
+ complex*16      :: mu_ionic(NR,Nx)          ! ionic dipole moment (NR,Nx)
+ complex*16      :: mu_ionic_e(NR,NE)        ! ionic dipole moment (NR,NE)
+ double precision:: adb(NR,Nstates)          ! electronic Eigenenergies (potential energy surface)
+ double precision:: ewf(NR,Nx,Nx,Nstates)    ! electronic wave function
+ double precision:: nwf(NR,Vstates)          ! nuclear wave function
+ ! double precision:: cofR(Nx,Nx),cofx(Nx,Nx)  ! nuclear & electronic cutoff-functions
+ double precision:: cofx(Nx,Nx),cofy(Nx,Nx)
+ double precision:: cofxy_same(Nx,Nx),cofxy_oppo(Nx,Nx)
+ double precision:: cofin(Nx,Nx)
+ double precision:: mask(Nx,Nx)
 end module
 
 module FFTW3

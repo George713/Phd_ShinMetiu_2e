@@ -99,7 +99,24 @@ module MODpotential
         ionicpot(i) = v12 + v13 + v23
 
     end do
-    
+
+    do J2 = 1, Nx
+    do J1 = 1, Nx
+    do  I = 1, NR
+      if ( j1.GE.256) then
+        pot_x(i,j1,j2) = pot(i,426,j2)  ! Location 426 corresponds to x = 80 A.
+      else
+        pot_x(i,j1,j2) = pot(i,85,j2)  ! Location 85 corresponds to x = -80 A.
+      end if
+
+      if ( j2.GE.256) then
+        pot_y(i,j1,j2) = pot(i,j1,426)
+      else
+        pot_y(i,j1,j2) = pot(i,j1,85)
+      end if
+    end do
+    end do
+    end do
 
     ! do I = 1, NR
     !   R = R0 + (i - 1) *dR

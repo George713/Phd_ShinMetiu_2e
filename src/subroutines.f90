@@ -4,67 +4,140 @@ module MODsubroutines
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   !%%%%%% Setup of cutoff functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  subroutine make_cofs
+  ! subroutine make_cofs
+
+  !   use pot_param
+  !   use global_arrays
+
+  !   implicit none
+  !   integer I
+  !   double precision:: R, x
+
+  !   open(1,file='out/cofR.out',status='replace')
+  !   open(2,file='out/cofx.out',status='replace')
+
+  !   write(6,'(12X,A)'), 'Defining cutoff-functions...'
+
+  !   !%%%%%% Make R cutoff function %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !   do I = 1, NR
+  !     R = R0 + (i-1) * dR
+  !       if ( R .GE. 0.d0 ) then
+  !         cofR(i) = 1.d0 / (1.d0 + exp( (R - (Rend *3/4) ) * 7 ))   ! cofR = .5 @ R = Rend*3/4, '7' specifies steepness
+  !       end if
+  !   end do
+  
+  !   do I = 1, NR/2
+  !     cofR(i) = cofR(NR-i+1)  ! making nuclear cutoff symmetric
+  !   end do
+
+  !   cofR = 1.
+
+  !   do I = 1, NR
+  !     R = R0 + (i-1) * dR
+  !     write(1,*) sngl(R *au2A), sngl(cofR(i))
+  !   end do
+
+
+  !   !%%%%%% Make x cutoff function %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !   do I = 1, Nx
+  !     x = x0 + (i-1) * dx
+
+  !     if ( x .GE. 0.d0 ) then
+  !       cofx(i) = 1.d0 / (1.d0 + exp( (x - (xend *3/4)) *Rend/xend * 7 ))
+  !     end if
+  !   end do
+
+  !   do I = 1, Nx/2
+  !     cofx(i) = cofx(Nx-i+1)  ! making electronic cutoff symmetric
+  !   end do
+
+  !   do I = 1, Nx
+  !     x = x0 + (i-1) * dx
+  !     write(2,*) sngl(x *au2A), sngl(cofx(i))
+  !   end do    
+
+
+  !   close(1,status='keep')
+  !   close(2,status='keep')
+
+
+  !   return
+  ! end subroutine make_cofs
+
+
+
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%% Setup of new cutoff masks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+
+  subroutine make_new_cofs
 
     use pot_param
     use global_arrays
 
     implicit none
-    integer I
-    double precision:: R, x
+    integer j1,j2
+    double precision:: x, y
+    double precision:: boundary_1, boundary_2
 
-    open(1,file='out/cofR.out',status='replace')
-    open(2,file='out/cofx.out',status='replace')
+    open(1,file='out/cof_masks.out',status='replace')
 
     write(6,'(12X,A)'), 'Defining cutoff-functions...'
 
-    !%%%%%% Make R cutoff function %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    do I = 1, NR
-      R = R0 + (i-1) * dR
-        if ( R .GE. 0.d0 ) then
-          cofR(i) = 1.d0 / (1.d0 + exp( (R - (Rend *3/4) ) * 7 ))   ! cofR = .5 @ R = Rend*3/4, '7' specifies steepness
-        end if
-    end do
-  
-    do I = 1, NR/2
-      cofR(i) = cofR(NR-i+1)  ! making nuclear cutoff symmetric
-    end do
+    boundary_1 = 80d0
+    boundary_2 = 50d0
 
-    cofR = 1.
+    do j1 = 1, Nx
+    do j2 = 1, Nx
+      x = x0 + (j1-1) * dx
+      y = x0 + (j2-1) * dx
 
-    do I = 1, NR
-      R = R0 + (i-1) * dR
-      write(1,*) sngl(R *au2A), sngl(cofR(i))
-    end do
+      cofx(j1,j2) = (1d0 - cutoff_1d(j1,boundary_1)) * cutoff_1d(j2,boundary_2)
+
+      cofy(j1,j2) = (1d0 - cutoff_1d(j2,boundary_1)) * cutoff_1d(j1,boundary_2)
 
 
-    !%%%%%% Make x cutoff function %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    do I = 1, Nx
-      x = x0 + (i-1) * dx
-
-      if ( x .GE. 0.d0 ) then
-        cofx(i) = 1.d0 / (1.d0 + exp( (x - (xend *3/4)) *Rend/xend * 7 ))
+      if (x*y.GE.0) then
+        cofxy_same(j1,j2) = (1d0 - cutoff_1d(j1,boundary_1)) * (1d0 - cutoff_1d(j2,boundary_2)) &
+          &               + (1d0 - cutoff_1d(j2,boundary_1)) * (1d0 - cutoff_1d(j1,boundary_2)) &
+          &               - (1d0 - cutoff_1d(j1,boundary_1)) * (1d0 - cutoff_1d(j2,boundary_1))
+      else
+        cofxy_oppo(j1,j2) = (1d0 - cutoff_1d(j1,boundary_1)) * (1d0 - cutoff_1d(j2,boundary_2)) &
+          &               + (1d0 - cutoff_1d(j2,boundary_1)) * (1d0 - cutoff_1d(j1,boundary_2)) &
+          &               - (1d0 - cutoff_1d(j1,boundary_1)) * (1d0 - cutoff_1d(j2,boundary_1))
       end if
+
+
+      cofin(j1,j2) = cutoff_1d(j1,boundary_1) * cutoff_1d(j2,boundary_1)
+
+      if (abs(x-y).LE.15d0/au2A) mask(j1,j2) = cofxy_same(j1,j2)
+
+      write(1,*) x*au2A, y*au2A, cofx(j1,j2), cofy(j1,j2), &
+        &                      cofxy_same(j1,j2), cofxy_oppo(j1,j2),   & 
+        &                      cofin(j1,j2), mask(j1,j2)
+
     end do
-
-    do I = 1, Nx/2
-      cofx(i) = cofx(Nx-i+1)  ! making electronic cutoff symmetric
     end do
-
-    do I = 1, Nx
-      x = x0 + (i-1) * dx
-      write(2,*) sngl(x *au2A), sngl(cofx(i))
-    end do    
-
-
-    close(1,status='keep')
-    close(2,status='keep')
 
 
     return
-  end subroutine make_cofs
+  end subroutine make_new_cofs
 
+  ! 1D cutoff function. 1/2 @ center
+  function cutoff_1d(idx,center)
+    use pot_param
+    use global_arrays
+    integer, intent(in):: idx
+    double precision center, x, cutoff_1d
 
+      x = x0 + (idx-1) * dx
+
+      cutoff_1d = 1d0 / (1d0 + exp((abs(x)-center/au2A)/8d0))
+
+    return
+  end function
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   !%%%%%% Setup of momentum grids %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,6 +298,34 @@ module MODsubroutines
 
     return
   end subroutine integ_complex_p
+
+
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%% Norm calculation of complex wavefunction 3d %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  subroutine integ_complex_xxp(psi, norm)
+
+    use data_grid
+
+    implicit none
+    integer I,J1,J2
+    complex*16, dimension(:,:,:), intent(in):: psi
+    double precision, intent(out):: norm
+
+      norm = 0.d0
+
+      do J2 = 1, Nx
+      do J1 = 1, Nx
+      do  I = 1, NR
+        norm = norm + abs(psi(i,j1,j2))**2
+      end do
+      end do
+      end do
+
+      norm = norm *dR *dx *dpx
+
+    return
+  end subroutine integ_complex_xxp
 
 
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -441,6 +542,32 @@ module MODsubroutines
 
     return
   end subroutine density
+
+
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%% Density calculation electronic part in momentum space %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  subroutine density_p(psi_p, densx_p)
+
+    use data_grid
+
+    implicit none
+    integer I,J1,J2
+    complex*16,       intent(in) :: psi_p(NR,Nx,Nx)
+    double precision, intent(out):: densx_p(Nx)
+      densx_p = 0d0
+
+      do J2 = 1, Nx
+      do J1 = 1, Nx
+      do  I = 1, NR
+        densx_p(j2) = densx_p(j2) + abs(psi_p(i,j1,j2))**2
+      end do
+      end do
+      end do
+      densx_p = densx_p *dpR *dpx
+
+    return
+  end subroutine density_p
 
 
   !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

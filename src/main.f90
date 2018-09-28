@@ -18,15 +18,16 @@ program metiu_model_system
   call input              ! reading input-file
   call p_grid             ! generating momentum grids
   call make_potential     ! calculating potential & ionic potential
-  call make_cofs          ! setup of cofR & cofx (cutoff functions)
+  ! call make_cofs          ! setup of cofR & cofx (cutoff functions)
+  call make_new_cofs          ! setup of cofR & cofx (cutoff functions)
   ! open(101,file='time1.out',status='replace')
   ! write(101,*) sngl((omp_get_wtime ( ) - wtime)/3600)       ! Calculation time in hours
   ! close(101,status='keep')
 
   call adiabatic_surface  ! calculating elec. wavefunction, BO curves & dipole moment
-  ! open(102,file='time_adia.out',status='replace')
-  ! write(102,*) sngl((omp_get_wtime ( ) - wtime)/3600)       ! Calculation time in hours
-  ! close(102,status='keep')
+  open(102,file='time_adia.out',status='replace')
+  write(102,*) sngl((omp_get_wtime ( ) - wtime)/3600)       ! Calculation time in hours
+  close(102,status='keep')
 
   ! call nuclear_wavefct    ! calculating nuclear wavefunction
   ! open(103,file='time3.out',status='replace')
