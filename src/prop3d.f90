@@ -94,7 +94,7 @@ subroutine prop3D
   call dfftw_plan_dft_2d(planFxy, Nx, Nx, psixy, psixy,   FFTW_FORWARD,  FFTW_MEASURE)
   call dfftw_plan_dft_2d(planFRx, NR, Nx, psi_Rx, psi_Rx, FFTW_FORWARD,  FFTW_MEASURE)
   call dfftw_plan_dft_2d(planBRx, NR, Nx, psi_Rx, psi_Rx, FFTW_BACKWARD, FFTW_MEASURE)
-  call dfftw_plan_dft_2d(planF1,  Nx, psi_1d, psi_1d,     FFTW_FORWARD, FFTW_MEASURE)
+  call dfftw_plan_dft_1d(planF1,  Nx, psi_1d, psi_1d,     FFTW_FORWARD, FFTW_MEASURE)
 
   dens_list = (/ (I,I=10,25) /)
 
@@ -610,7 +610,7 @@ subroutine transform_1D_to_momentumspace(plan, psi, direction) ! performs 1D FT 
   double precision norm, normP
   complex*16, intent(inout), dimension(:,:,:):: psi
   character(len=1), intent(in):: direction
-  complex*16, dimension(:,:):: psi1d(Nx)
+  complex*16, dimension(:):: psi1d(Nx)
 
   call integ_complex(psi,norm)
 
